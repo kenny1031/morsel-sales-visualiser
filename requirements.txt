@@ -1,0 +1,9 @@
+# ───────── Runtime ─────────
+dash>=2.16.1            # web framework
+plotly>=5.18            # underlying charting library
+pandas>=2.2             # data wrangling (brings numpy, python‑dateutil, tzdata)
+
+# ───────── Testing ─────────
+pytest>=8.0             # test runner
+dash[testing]>=2.16.1   # Selenium + Dash integration helpers
+webdriver-manager>=4.0  # auto‑downloads matching chromedriver on any machine
