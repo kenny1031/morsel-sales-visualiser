@@ -2,8 +2,10 @@ from dash import Dash, html, dcc, Output, Input
 import plotly.express as px
 import pandas as pd
 
+DATA_PATH = "./pink_morsel_sales.csv"
+
 # Load preprocessed CSV file
-df = pd.read_csv("pink_morsel_sales.csv")
+df = pd.read_csv(DATA_PATH)
 df["date"] = pd.to_datetime(df["date"])
 df = df.sort_values("date")
 
