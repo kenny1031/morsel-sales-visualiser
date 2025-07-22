@@ -9,7 +9,7 @@ df = df.sort_values("date")
 
 # Dash layout
 COLORWAY = ["#EF476F", "#FF7E8C", "#FFB3C0", "#2F2F33"]  # Adobe‑Color palette
-BG_SOFT   = "#FFF3F6"
+BG_SOFT = "#FFF3F6"
 
 external_stylesheets = [
     "https://fonts.googleapis.com/css?family=Nunito:wght@300;400;600&display=swap",
@@ -20,23 +20,21 @@ app.layout = html.Div(
     className="container",
     children=[
         html.H1("Pink Morsel Sales Dashboard", className="title"),
-
-        # ── Region selector ─────────────────────────────────────────────
+        # Region selector
         dcc.RadioItems(
             id="region-filter",
             options=[
                 {"label": "All Regions", "value": "all"},
-                {"label": "North",       "value": "north"},
-                {"label": "East",        "value": "east"},
-                {"label": "South",       "value": "south"},
-                {"label": "West",        "value": "west"},
+                {"label": "North", "value": "north"},
+                {"label": "East", "value": "east"},
+                {"label": "South", "value": "south"},
+                {"label": "West", "value": "west"},
             ],
             value="all",
             inline=True,
             className="radio-bar",
         ),
-
-        # ── Line chart ──────────────────────────────────────────────────
+        # Line chart
         dcc.Graph(id="sales-line"),
 
         html.H3("Price‑rise checkpoint (15 Jan 2021)"),
@@ -85,12 +83,12 @@ def update_visual(selected_region: str):
     verdict = (
         "higher after the price rise" if after_avg > before_avg else "higher before the price rise"
     )
-    blurb = (
+    interp = (
         f"Average sales before 15 Jan 2021 was ${before_avg:,.0f}, "
         f"after was ${after_avg:,.0f}. Hence, the sales was {verdict}."
     )
 
-    return fig, blurb
+    return fig, interp
 
 
 if __name__ == "__main__":
