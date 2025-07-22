@@ -7,74 +7,99 @@ df = pd.read_csv("pink_morsel_sales.csv")
 df["date"] = pd.to_datetime(df["date"])
 df = df.sort_values("date")
 
-# Dash layout
-COLORWAY = ["#EF476F", "#FF7E8C", "#FFB3C0", "#2F2F33"]  # Adobe‑Color palette
-BG_SOFT = "#FFF3F6"
+COLOURS = {  # Adobe‑Color palette #45488A
+    "primary": "#45488A",
+    "secondary": "#1C1C62",
+    "font": "#FFFFFF",
+    "curve": "#F6ED79"
+}
 
-external_stylesheets = [
-    "https://fonts.googleapis.com/css?family=Nunito:wght@300;400;600&display=swap",
-]
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+# Initialise dash
+app = Dash(__name__)
 
+# Create the figure
+def generate_figure(fig_data):
+    fig = px.line(
+        fig_data,
+        x="date",
+        y="sales",
+        color="region",
+        labels={"date": "Date", "sales": "Sales ($)"},
+        title="Pink Morsel Sales",
+    )
+    fig.update_layout(
+        plot_bgcolor=COLOURS["secondary"],
+        paper_bgcolor=COLOURS["primary"],
+        font_color=COLOURS["font"],
+    )
+    return fig
+
+# region picker
+region_picker = dcc.RadioItems(
+    ["all", "north", "east", "south", "west"],
+    "all",
+    labelStyle={"color": COLOURS["font"]},
+    id="region_picker",
+    inline=True
+)
+region_picker_wrapper = html.Div(
+    children=[region_picker],
+    style={"font-size": "150%"}
+)
+
+# Define the app layout
 app.layout = html.Div(
-    className="container",
     children=[
-        html.H1("Pink Morsel Sales Dashboard", className="title"),
-        # Region selector
-        dcc.RadioItems(
-            id="region-filter",
-            options=[
-                {"label": "All Regions", "value": "all"},
-                {"label": "North", "value": "north"},
-                {"label": "East", "value": "east"},
-                {"label": "South", "value": "south"},
-                {"label": "West", "value": "west"},
-            ],
-            value="all",
-            inline=True,
-            className="radio-bar",
+        html.H1(
+            "Pink Morsel Visualiser",
+            id="header",
+            style={
+                "background-color": COLOURS["secondary"],
+                "color": COLOURS["font"],
+                "border-radius": "20px"
+            }
         ),
-        # Line chart
-        dcc.Graph(id="sales-line"),
-
-        html.H3("Price‑rise checkpoint (15 Jan 2021)"),
-        html.Div(id="before-after"),
+        dcc.Graph(
+            id="graph",
+            figure=generate_figure(df)
+        ),
+        region_picker_wrapper,
+        html.H3(
+            children="Price‑rise checkpoint (15 Jan 2021)",
+            style={
+                "textAlign": "left",
+                "color": COLOURS["font"]
+            },
+        ),
+        html.Div(
+            id="before-after",
+            style={
+                "textAlign": "left",
+                "color": COLOURS["font"]
+            },
+        )
     ],
+    style={
+        "textAlign": "center",
+        "background-color": COLOURS["primary"],
+        "border-radius": "20px"
+    },
 )
 
 # Callbacks
 @app.callback(
-    Output("sales-line", "figure"),
+    Output("graph", "figure"),
     Output("before-after", "children"),
-    Input("region-filter", "value"),
+    Input(region_picker, "value"),
 )
 def update_visual(selected_region: str):
     # Filter view by region
     if selected_region == "all":
-        view = df.copy()
-        title_suffix = "— All Regions"
-        colour_arg = "region"
+        view = df
     else:
         view = df[df["region"] == selected_region]
-        title_suffix = f"— {selected_region.capitalize()}"
-        colour_arg = None  # single‑line series
-
     # Build the figure
-    fig = px.line(
-        view,
-        x="date",
-        y="sales",
-        color=colour_arg,
-        labels={"date": "Date", "sales": "Sales ($)"},
-        title=f"Daily Pink Morsel Sales {title_suffix}",
-        color_discrete_sequence=COLORWAY,
-    )
-    fig.update_layout(
-        legend_title_text="Region",
-        plot_bgcolor=BG_SOFT,
-        paper_bgcolor=BG_SOFT,
-        margin=dict(l=30, r=30, t=60, b=40),
-    )
+    figure = generate_figure(view)
 
     # Average sales before/after 15‑Jan‑2021
     cutoff = pd.Timestamp("2021-01-15")
@@ -87,8 +112,7 @@ def update_visual(selected_region: str):
         f"Average sales before 15 Jan 2021 was ${before_avg:,.0f}, "
         f"after was ${after_avg:,.0f}. Hence, the sales was {verdict}."
     )
-
-    return fig, interp
+    return figure, interp
 
 
 if __name__ == "__main__":
