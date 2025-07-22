@@ -34,6 +34,23 @@ def generate_figure(fig_data):
     )
     return fig
 
+# Header
+header = html.H1(
+    children="Pink Morsel Visualiser",
+    id="header",
+    style={
+        "background-color": COLOURS["secondary"],
+        "color": COLOURS["font"],
+        "border-radius": "20px"
+    }
+)
+
+# Graph
+graph = dcc.Graph(
+    id="graph",
+    figure=generate_figure(df)
+)
+
 # region picker
 region_picker = dcc.RadioItems(
     ["all", "north", "east", "south", "west"],
@@ -50,19 +67,8 @@ region_picker_wrapper = html.Div(
 # Define the app layout
 app.layout = html.Div(
     children=[
-        html.H1(
-            "Pink Morsel Visualiser",
-            id="header",
-            style={
-                "background-color": COLOURS["secondary"],
-                "color": COLOURS["font"],
-                "border-radius": "20px"
-            }
-        ),
-        dcc.Graph(
-            id="graph",
-            figure=generate_figure(df)
-        ),
+        header,
+        graph,
         region_picker_wrapper,
         html.H3(
             children="Price‑rise checkpoint (15 Jan 2021)",
