@@ -10,7 +10,7 @@ A single‑page **Dash** application that ingests three daily‑sales CSV files,
 
 **Test suite** - Three Selenium‑powered tests (header / graph / region picker) via `dash[testing]`.
 
-**CI‑ready** - `run_tests.sh` helper + optional GitHub Actions workflow (`.github/workflows/tests.yml`).
+**CI‑ready** - `run_tests.sh` helper.
 ## Quickstart
 ```{bash}
 # 1 Clone & enter repo
@@ -33,16 +33,6 @@ $ python app.py
 pytest -q
 ```
 The suite uses **webdriver‑manager** to pull the right ChromeDriver automatically, so it works locally and on CI runners with no extra setup.
-
-## Continuous integration (optional)
-If you push the provided `tests.yml` into `.github/workflows/`, GitHub Actions will:
-1. Check out the repo
-2. Restore / build a virtual environment
-3. Install dependencies
-4. Run `./run_tests.sh`
-
-Pull-requests turn red if any UI element disappears.
-
 ## Project structure
 ```{bash}
 .
@@ -52,10 +42,7 @@ Pull-requests turn red if any UI element disappears.
 ├── tests/
 │   └── test_app.py            # Selenium tests
 ├── run_tests.sh               # local + CI test launcher
-├── requirements.txt           # runtime + dev deps
-└── .github/
-    └── workflows/
-        └── tests.yml          # GitHub Actions (optional)
+└── requirements.txt           # runtime + dev deps
 ```
 
 ## Requirements
